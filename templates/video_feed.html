@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Feed</title>
+    <style>
+        #video-container {
+            position: relative;
+        }
+        #video {
+            width: 100%;
+        }
+        #metadata {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="video-container">
+        <video id="video" autoplay></video>
+        <div id="metadata"></div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const metadataDiv = document.getElementById('metadata');
+
+        function updateMetadata(metadata) {
+            metadataDiv.innerHTML = `
+                <p>Road Damage Count: ${metadata.road_damage_count}</p>
+                <p>Road Damage Types: ${metadata.road_damage_types.join(', ')}</p>
+                <p>Traffic Light Count: ${metadata.traffic_light_count}</p>
+                <p>Traffic Light Types: ${metadata.traffic_light_types.join(', ')}</p>
+            `;
+        }
+
+        function handleFrameData(frameData) {
+            if (frameData) {
+                const boundary = frameData.split('\r\n\r\n')[1];
+                if (boundary) {
+                    const jsonMetadata = JSON.parse(boundary);
+                    updateMetadata(jsonMetadata);
+                }
+            }
+        }
+
+        function fetchVideo() {
+            const eventSource = new EventSource('/video_feed?video_path={{ video_path }}');
+            
+            eventSource.onmessage = function(event) {
+                const data = event.data;
+                handleFrameData(data);
+                const frame = data.split('\r\n')[1].split('\r\n\r\n')[1];
+                if (frame) {
+                    video.src = 'data:image/jpeg;base64,' + btoa(frame);
+                }
+            };
+        }
+
+        fetchVideo();
+    </script>
+</body>
+</html>
