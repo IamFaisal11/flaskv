@@ -13,10 +13,10 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
 # Load YOLOv8 models
-yolov8_road_damage = YOLO(r'flask\App\models\best (8).pt')
-yolov8_aerial = YOLO(r'flask\App\models\arielview.pt')
-yolov8_traffic_light = YOLO(r'flask\App\models\best (7).pt')
-yolov8_road_object = YOLO(r'flask\App\models\yolov8n.pt')  # New model
+yolov8_road_damage = YOLO(r'models\best (8).pt')
+yolov8_aerial = YOLO(r'models\arielview.pt')
+yolov8_traffic_light = YOLO(r'models\best (7).pt')
+yolov8_road_object = YOLO(r'models\yolov8n.pt')  # New model
 deepsort = DeepSort()
 # Configure Detectron2
 # cfg = get_cfg()
